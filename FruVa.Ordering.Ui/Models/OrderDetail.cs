@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace FruVa.Ordering.Ui.ViewModel
+namespace FruVa.Ordering.Ui.Models
 {
     public partial class OrderDetail : ObservableObject
     {

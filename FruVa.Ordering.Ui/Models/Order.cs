@@ -2,7 +2,7 @@
 using FruVa.Ordering.Ui.ViewModel;
 using System.Collections.ObjectModel;
 
-namespace FruVa.Ordering.Ui.Model
+namespace FruVa.Ordering.Ui.Models
 {
     public partial class Order : ObservableObject
     {

@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FruVa.Ordering.Ui.Model;
+using FruVa.Ordering.Ui.Models;
 using System.Collections.ObjectModel;
 
-namespace FruVa.Ordering.Ui.ViewModel
+namespace FruVa.Ordering.Ui.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
