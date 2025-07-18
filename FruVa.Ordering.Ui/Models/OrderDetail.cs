@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Security.RightsManagement;
 
 namespace FruVa.Ordering.Ui.Models
 {
     public partial class OrderDetail : ObservableObject
     {
         [ObservableProperty]
-        public string? _articleName;
+        private Article _article;
 
         [ObservableProperty]
         public int? _quantity;

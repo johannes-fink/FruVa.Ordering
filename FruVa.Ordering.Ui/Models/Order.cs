@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FruVa.Ordering.Ui.ViewModel;
 using System.Collections.ObjectModel;
 
 namespace FruVa.Ordering.Ui.Models
@@ -8,8 +7,11 @@ namespace FruVa.Ordering.Ui.Models
     {
         public decimal? TotalPrice => OrderDetails.Sum(x => x.Price);
 
-        public int OrderNumber { get; set; }
-        public required string RecipientName { get; set; }
+        [ObservableProperty]
+        public int _orderNumber;
+
+        [ObservableProperty]
+        private Recipient _recipient;
         
         [ObservableProperty]
         public ObservableCollection<OrderDetail> _orderDetails = [];
