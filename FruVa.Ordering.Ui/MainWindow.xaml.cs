@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using FruVa.Ordering.Ui.ViewModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,14 +12,17 @@ using System.Windows.Shapes;
 
 namespace FruVa.Ordering.Ui
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainWindowViewModel();
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
