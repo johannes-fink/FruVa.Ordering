@@ -9,7 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FruVa.Ordering.ApiAccess\FruVa.Ordering.ApiAccess.csproj" />
     <ProjectReference Include="..\FruVa.Ordering.DataAccess\FruVa.Ordering.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="log4net" Version="3.1.0" />
+  </ItemGroup>
 </Project>

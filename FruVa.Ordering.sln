@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FruVa.Ordering.Ui", "FruVa.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FruVa.Ordering.DataAccess", "FruVa.Ordering.DataAccess\FruVa.Ordering.DataAccess.csproj", "{196F3E23-A196-47B4-B61C-9DFFAD988C38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FruVa.Ordering.ApiAccess", "FruVa.Ordering.ApiAccess\FruVa.Ordering.ApiAccess.csproj", "{221A7917-B6C4-4B90-971D-15F7673D9196}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{196F3E23-A196-47B4-B61C-9DFFAD988C38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{196F3E23-A196-47B4-B61C-9DFFAD988C38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{196F3E23-A196-47B4-B61C-9DFFAD988C38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{221A7917-B6C4-4B90-971D-15F7673D9196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{221A7917-B6C4-4B90-971D-15F7673D9196}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{221A7917-B6C4-4B90-971D-15F7673D9196}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{221A7917-B6C4-4B90-971D-15F7673D9196}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
