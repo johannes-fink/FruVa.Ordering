@@ -1,5 +1,6 @@
-﻿using FruVa.Ordering.Ui.ViewModel;
+﻿using FruVa.Ordering.Ui.ViewModels;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,15 +11,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FruVa.Ordering.Ui
+namespace FruVa.Ordering.Ui.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private MainWindowViewModel? _vm;
+
+        public MainWindow(MainWindowViewModel viewModel)
         {
+            _vm = viewModel;
+            this.DataContext = viewModel;
+
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
-        }
+        }        
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {

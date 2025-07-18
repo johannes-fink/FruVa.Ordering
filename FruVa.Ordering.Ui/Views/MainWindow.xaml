@@ -1,4 +1,4 @@
-﻿<Window x:Class="FruVa.Ordering.Ui.MainWindow"
+﻿<Window x:Class="FruVa.Ordering.Ui.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,12 +16,10 @@
         <Thickness x:Key="InnerMargin">8</Thickness>
         <Thickness x:Key="CellPadding">4</Thickness>
 
-        <!-- Icon glyphs (fallback text; replace w/PathIcons or FontAwesome if used in project) -->
         <sys:String x:Key="GlyphAdd">+</sys:String>
         <sys:String x:Key="GlyphSearch">🔍</sys:String>
         <sys:String x:Key="GlyphDelete">✖</sys:String>
 
-        <!-- DataGrid Style: uniform padding & selection -->
         <Style TargetType="DataGrid" x:Key="OrdersDataGridBaseStyle">
             <Setter Property="AutoGenerateColumns" Value="False" />
             <Setter Property="SelectionMode" Value="Single" />
@@ -33,13 +31,11 @@
             <Setter Property="RowHeaderWidth" Value="0" />
         </Style>
 
-        <!-- DataGrid Style for editable lines -->
         <Style TargetType="DataGrid" x:Key="LinesDataGridBaseStyle" BasedOn="{StaticResource OrdersDataGridBaseStyle}">
             <Setter Property="IsReadOnly" Value="False" />
         </Style>
-
-        <!-- Delete Button Style (compact) -->
-        <Style TargetType="Button" x:Key="GridDeleteButtonStyle">
+        
+       <Style TargetType="Button" x:Key="GridDeleteButtonStyle">
             <Setter Property="Padding" Value="2" />
             <Setter Property="Margin" Value="0" />
             <Setter Property="MinWidth" Value="20" />
@@ -48,10 +44,9 @@
             <Setter Property="Content" Value="{StaticResource GlyphDelete}" />
         </Style>
 
-        <!-- Header Template with trailing Add Button-->
         <DataTemplate x:Key="GroupHeaderWithAddTemplate">
             <DockPanel LastChildFill="True">
-                <!-- Add Button -->
+
                 <Button DockPanel.Dock="Right"
                 Padding="2"
                 Margin="5,0,0,0"
@@ -59,7 +54,7 @@
                 ToolTip="Add"
                 Command="{Binding DataContext.AddOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
 
-                <!-- Header Text -->
+
                 <TextBlock Text="Orders"
                    FontWeight="Bold"
                    VerticalAlignment="Center"
@@ -67,7 +62,7 @@
             </DockPanel>
         </DataTemplate>
 
-        <!-- Recipient Search Template  -->
+
         <DataTemplate x:Key="RecipientSelectorTemplate">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -77,19 +72,19 @@
                 <TextBox Grid.Column="0"
                          Margin="0"
                          Padding="{StaticResource CellPadding}"
-                         Text="{Binding RecipientName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" />
+                         Text="{Binding Recipient.DisplayName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" />
                 <Button Grid.Column="1"
                         Margin="4,0,0,0"
                         Padding="4,0"
                         Content="{StaticResource GlyphSearch}"
                         ToolTip="Find Recipient"
-                        Command="{Binding DataContext.FindRecipientCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        Command="{Binding DataContext.FindRecipientsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                         CommandParameter="{Binding}" />
 
             </Grid>
         </DataTemplate>
         
-        <!-- Article Search Template  -->
+
         <DataTemplate x:Key="ArticleSelectorTemplate">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -106,19 +101,19 @@
                         Padding="4,0"
                         Content="{StaticResource GlyphSearch}"
                         ToolTip="Find Article"
-                        Command="{Binding DataContext.FindArticleCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        Command="{Binding DataContext.FindArticlesCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                         CommandParameter="{Binding}" />
             </Grid>
         </DataTemplate>
 
-        <!-- Order Lines DataGrid Columns Template via Style  -->
+
         <Style TargetType="DataGrid" x:Key="OrderLinesGridStyle" BasedOn="{StaticResource LinesDataGridBaseStyle}">
             <Setter Property="HeadersVisibility" Value="Column" />
         </Style>
 
     </Window.Resources>
 
-    <!-- Layout Root  -->
+
     <Grid Margin="{StaticResource OuterMargin}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
@@ -130,7 +125,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Orders Group  -->
+    
         <GroupBox Grid.Row="0"
                   Grid.Column="0"
                   Margin="0,0,16,0"
@@ -146,7 +141,7 @@
                                             Binding="{Binding OrderNumber}" />
                         <DataGridTextColumn Header="Title"
                                             Width="*"
-                                            Binding="{Binding RecipientName}" />
+                                            Binding="{Binding Recipient.DisplayName}" />
                         <DataGridTextColumn Header="Preis"
                                             Width="Auto"
                                             Binding="{Binding TotalPrice, StringFormat={}{0:C}}" />
@@ -213,6 +208,7 @@
                            Grid.Column="0"
                            Text="Recipient:"
                            VerticalAlignment="Center" />
+                
                 <ContentPresenter Grid.Row="1"
                                   Grid.Column="1"
                                   Content="{Binding SelectedOrder}"
@@ -223,18 +219,20 @@
                            Grid.Column="0"
                            Text="Name:"
                            VerticalAlignment="Center" />
+                
                 <TextBox Grid.Row="2"
                          Grid.Column="1"
                          Margin="0"
                          Padding="{StaticResource CellPadding}"
                          IsReadOnly="True"
-                         Text="{Binding SelectedOrder.RecipientName}" />
+                         Text="{Binding SelectedOrder.Recipient.DisplayName}" />
 
                 <!-- Article Search (to add lines) -->
                 <TextBlock Grid.Row="3"
                            Grid.Column="0"
                            Text="Article:"
                            VerticalAlignment="Center" />
+                
                 <ContentPresenter Grid.Row="3"
                                   Grid.Column="1"
                                   Content="{Binding SelectedOrder}"
@@ -247,13 +245,14 @@
                           Style="{StaticResource OrderLinesGridStyle}"
                           ItemsSource="{Binding SelectedOrder.OrderDetails}"
                           SelectedItem="{Binding SelectedOrderDetail}">
+                    
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Qty"
                                             Width="Auto"
                                             Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" />
                         <DataGridTextColumn Header="Article"
                                             Width="*"
-                                            Binding="{Binding ArticleName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" />
+                                            Binding="{Binding Article.DisplayName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" />
                         <DataGridTextColumn Header="Preis"
                                             Width="Auto"
                                             Binding="{Binding Price, StringFormat={}{0:C}}" />
@@ -272,16 +271,14 @@
             </Grid>
         </GroupBox>
 
-        <!-- Footer Buttons  -->
         <StackPanel Grid.Row="1"
                     Grid.Column="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Margin="0,16,0,0">
 
-            <Button Content="Save" Width="100" Height="30" Click="SaveButton_Click" Margin="5 0">
-                <Button.ToolTip>Speichert die aktuellen Daten</Button.ToolTip>
-            </Button>
+            <Button Content="Save" Width="100" Height="30" Click="SaveButton_Click" Margin="5 0"/>
+
 
             <Button Content="Cancel"
                Width="100"
