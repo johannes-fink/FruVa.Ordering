@@ -53,6 +53,11 @@ namespace FruVa.Ordering.ApiAccess.Models
 
         [JsonPropertyName("rowVersion")]
         public string RowVersion { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Id}|{MainArticleNumber}|{DetailArticleNumber}|{ArticleName}|{PackageSize}|{ArticleGroupNumber}|{ArticleGroupName}|{OriginCountry}|{TradeClass}|{Colli}|{Caliber}|{Variety}|{OwnBrand}|{SearchQuery}|{RowVersion}";
+        }
     }
 
 }
