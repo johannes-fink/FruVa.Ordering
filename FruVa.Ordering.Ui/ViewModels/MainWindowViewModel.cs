@@ -1,28 +1,45 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using FruVa.Ordering.ApiAccess;
+using FruVa.Ordering.ApiAccess.Models;
 using FruVa.Ordering.Ui.Models;
+using FruVa.Ordering.Ui.Views;
+using Microsoft.Extensions.DependencyInjection;
+using System.Buffers;
 using System.Collections.ObjectModel;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        public MainWindowViewModel()
+        private readonly IServiceProvider _services;
+
+        public MainWindowViewModel(IServiceProvider services)
         {
+            _services = services;
+
             Orders = new ObservableCollection<Order>
             {
                 new Order 
                 { 
                     OrderNumber = 1, 
-                    RecipientName = "Test1", 
+                    Recipient = new Models.Recipient
+                    {
+                        DisplayName = "Test1",
+                    },
                     OrderDetails =
                     [
-                        new OrderDetail { ArticleName = "Artikel 1", Quantity = 1, Price = 10m },
-                        new OrderDetail { ArticleName = "Artikel 2", Quantity = 2, Price = 20m }
+                        new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 1" }, Quantity = 1, Price = 10m },
+                        new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 2" }, Quantity = 2, Price = 20m }
                     ] 
                 },
-                new Order { OrderNumber = 2, RecipientName = "Test2" }
+                new Order { OrderNumber = 2, Recipient = new Models.Recipient { DisplayName = "Test2" } }
             };
+        }
+
+        public MainWindowViewModel()
+        {
         }
 
         [ObservableProperty]
@@ -34,6 +51,7 @@ namespace FruVa.Ordering.Ui.ViewModels
         [ObservableProperty]
         private OrderDetail? _selectedOrderDetail;
 
+        public Action CloseAction { get; internal set; }
 
         [RelayCommand]
         private void AddOrder()
@@ -41,11 +59,11 @@ namespace FruVa.Ordering.Ui.ViewModels
             var newOrder = new Order
             {
                 OrderNumber = Orders.Count + 1,
-                RecipientName = "Neuer Empfänger",
+                Recipient = new Models.Recipient { DisplayName = "Neuer Empfänger" },
                 OrderDetails =
                 [
-                    new OrderDetail { ArticleName = "Artikel 1", Quantity = 1, Price = 10m },
-                    new OrderDetail { ArticleName = "Artikel 2", Quantity = 2, Price = 20m }
+                    new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 1" }, Quantity = 1, Price = 10m },
+                    new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 2" }, Quantity = 2, Price = 20m }
                 ]
             };
 
@@ -82,10 +100,18 @@ namespace FruVa.Ordering.Ui.ViewModels
         }
 
         [RelayCommand]
-        private void FindRecipient() => throw new NotImplementedException();
+        private void FindRecipients()
+        {
+            var filterWindow = _services.GetRequiredService<FilterWindow>();
+            filterWindow.ShowDialog();
+        }
 
         [RelayCommand]
-        private void FindArticle() => throw new NotImplementedException();
+        private void FindArticles()
+        {
+            var filterWindow = _services.GetRequiredService<FilterWindow>();
+            filterWindow.ShowDialog();
+        }
     }
 }
 
