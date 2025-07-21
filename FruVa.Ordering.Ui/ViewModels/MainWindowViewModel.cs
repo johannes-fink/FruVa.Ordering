@@ -8,6 +8,7 @@ using FruVa.Ordering.Ui.Views;
 using Microsoft.Extensions.DependencyInjection;
 using System.Buffers;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
@@ -38,10 +39,6 @@ namespace FruVa.Ordering.Ui.ViewModels
             };
         }
 
-        public MainWindowViewModel()
-        {
-        }
-
         [ObservableProperty]
         private ObservableCollection<Order> _orders = [];
 
@@ -50,8 +47,6 @@ namespace FruVa.Ordering.Ui.ViewModels
 
         [ObservableProperty]
         private OrderDetail? _selectedOrderDetail;
-
-        public Action CloseAction { get; internal set; }
 
         [RelayCommand]
         private void AddOrder()
@@ -72,9 +67,10 @@ namespace FruVa.Ordering.Ui.ViewModels
         }
 
         [RelayCommand]
-        private void Cancel() 
-        { 
-            App.Current.Shutdown();
+        private void Cancel(IClosable window) 
+        {
+            window.Close();
+            Application.Current.Shutdown();
         }
 
         [RelayCommand]
@@ -103,6 +99,7 @@ namespace FruVa.Ordering.Ui.ViewModels
         private void FindRecipients()
         {
             var filterWindow = _services.GetRequiredService<FilterWindow>();
+            filterWindow.IsArticleFilterEnabled = false;
             filterWindow.ShowDialog();
         }
 
@@ -110,6 +107,7 @@ namespace FruVa.Ordering.Ui.ViewModels
         private void FindArticles()
         {
             var filterWindow = _services.GetRequiredService<FilterWindow>();
+            filterWindow.IsArticleFilterEnabled = true;
             filterWindow.ShowDialog();
         }
     }

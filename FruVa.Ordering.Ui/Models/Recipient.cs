@@ -16,13 +16,15 @@ namespace FruVa.Ordering.Ui.Models
         public Recipient(ApiAccess.Models.Recipient sourceItem)
         {
             SourceItem = sourceItem;
-            DisplayName = $"${SourceItem.Name} (${SourceItem.Street} | {SourceItem.StreetNumber} | {SourceItem.Country})";
+            DisplayName = $"{SourceItem.Name} ({SourceItem.Street} | {SourceItem.StreetNumber} | {SourceItem.Country})";
         }
 
         public ApiAccess.Models.Recipient? SourceItem { get; set; }
 
         public Guid? Id => SourceItem?.Id;
         public string? DisplayName { get; set; }
-        public bool? IsChecked { get; set; }
+        public bool IsChecked { get; set; }
+        public string? SearchContent => SourceItem?.ToString();
+
     }
 }

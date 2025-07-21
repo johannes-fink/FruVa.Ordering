@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace FruVa.Ordering.Ui.Views
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IClosable
     {
         private MainWindowViewModel? _vm;
 

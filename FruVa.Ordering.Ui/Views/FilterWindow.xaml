@@ -11,7 +11,8 @@
         Height="600"
         Width="900"
         MinHeight="400"
-        MinWidth="700">
+        MinWidth="700"
+        x:Name="this">
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -23,7 +24,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Give me an Article"
+        <TextBlock Grid.Row="0" Text="{Binding Title}"
                    FontSize="24" FontWeight="Bold"
                    HorizontalAlignment="Center" Margin="0,0,0,20"
                    Foreground="#333333"/>
@@ -32,17 +33,10 @@
             <TextBlock Text="Search" VerticalAlignment="Center" Margin="0,0,10,0"
                        FontSize="16" Foreground="#555555"/>
             <TextBox x:Name="SearchTextBox" Width="280" Height="30"
-                     Text="Tomate 600g NL"
+                     Text="{Binding SearchValue, UpdateSourceTrigger=PropertyChanged, Delay=300}"
                      Padding="5" VerticalContentAlignment="Center"
-                     BorderBrush="#CCCCCC" BorderThickness="1" />
-        </StackPanel>
-
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,15">
-            <RadioButton Content="Article" GroupName="TypeSelection" IsChecked="True"
-                         Margin="0,0,20,0" FontSize="16" Foreground="#555555"/>
-            <RadioButton Content="Recipient" GroupName="TypeSelection"
-                         FontSize="16" Foreground="#555555"/>
+                     BorderBrush="#CCCCCC" BorderThickness="1"
+                     />
         </StackPanel>
 
         <TextBlock Grid.Row="3" Text="- Gibt eine Liste von ausgewählten Elementen zurück"
@@ -53,8 +47,12 @@
         <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto"
                       BorderBrush="#DDDDDD" BorderThickness="1"
                       Padding="10" Background="White">
+            
             <DataGrid x:Name="FilterDataGrid"
-                      ItemsSource="{Binding FilterItems}"
+                      ItemsSource="{Binding FilterItems.View, AsyncState=True}"
+                      EnableColumnVirtualization="True"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
                       AutoGenerateColumns="False"
                       HeadersVisibility="Column"
                       CanUserAddRows="False"
@@ -88,7 +86,7 @@
                     HorizontalAlignment="Right"
                     Margin="0,16,0,0">
             <Button Content="Apply" Width="100" Height="30" Margin="5,0"/>
-            <Button Content="Cancel" Width="100" Height="30" Command="{Binding CancelCommand}" />
+            <Button Content="Cancel" Width="100" Height="30" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=this}" />
         </StackPanel>
     </Grid>
 </Window>

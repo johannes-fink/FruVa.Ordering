@@ -11,6 +11,7 @@ namespace FruVa.Ordering.Ui.Models
     {
         Guid? Id { get; }
         string? DisplayName { get; set; }
-        bool? IsChecked {  get; set; }
+        bool IsChecked {  get; set; }
+        string? SearchContent { get; }
     }
 }
