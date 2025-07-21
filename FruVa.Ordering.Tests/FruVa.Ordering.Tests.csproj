@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FruVa.Ordering.ApiAccess\FruVa.Ordering.ApiAccess.csproj" />
+    <ProjectReference Include="..\FruVa.Ordering.DataAccess\FruVa.Ordering.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>
