@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using FruVa.Ordering.Ui.Models;
 using FruVa.Ordering.Ui.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,10 @@ namespace FruVa.Ordering.Ui.Views
     public partial class FilterWindow : Window, IClosable
     {
         private readonly FilterWindowViewModel _vm;
+        internal List<IFilterItem> SelectedItems { get; set; } = [];
 
-        internal bool? IsArticleFilterEnabled 
-        { 
+        internal bool? IsArticleFilterEnabled
+        {
             get
             {
                 return _vm.IsArticleFilterEnabled;
@@ -49,8 +51,27 @@ namespace FruVa.Ordering.Ui.Views
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            if (this.DialogResult == false)
+            {
+                SelectedItems.Clear();
+            }
+            else
+            {
+                SelectedItems = (_vm.FilterItems.Source as List<IFilterItem>)?.Where(x => x.IsChecked).ToList();
+            }
+
             this.Visibility = Visibility.Hidden;
             e.Cancel = true;
+        }
+
+        private void FilterDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var filterItems = new List<IFilterItem>();
+            foreach (IFilterItem item in (sender as DataGrid)?.SelectedItems)
+            {
+                filterItems.Add(item);
+            }
+            _vm.SelectedOrderDetails = filterItems;
         }
     }
 }

@@ -92,11 +92,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0"
-                         Margin="0"
-                         Padding="{StaticResource CellPadding}"
-                         IsReadOnly="True"
-                         Text="Find Article..." />
+                
                 <Button Grid.Column="1"
                         Margin="4,0,0,0"
                         Padding="4,0"
@@ -173,7 +169,8 @@
         <!-- Details Group  -->
         <GroupBox Grid.Row="0"
                   Grid.Column="2"
-                  Header="Details">
+                  Header="Details"
+                  IsEnabled="{Binding IsDetailAreaEnabled}">
             <Grid Margin="{StaticResource InnerMargin}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -208,25 +205,13 @@
                 <TextBlock Grid.Row="1"
                            Grid.Column="0"
                            Text="Recipient:"
+                           IsEnabled="False"
                            VerticalAlignment="Center" />
                 
                 <ContentPresenter Grid.Row="1"
                                   Grid.Column="1"
                                   Content="{Binding SelectedOrder}"
                                   ContentTemplate="{StaticResource RecipientSelectorTemplate}" />
-
-                <!-- Recipient Name (read-only display for clarity; optional) -->
-                <TextBlock Grid.Row="2"
-                           Grid.Column="0"
-                           Text="Name:"
-                           VerticalAlignment="Center" />
-                
-                <TextBox Grid.Row="2"
-                         Grid.Column="1"
-                         Margin="0"
-                         Padding="{StaticResource CellPadding}"
-                         IsReadOnly="True"
-                         Text="{Binding SelectedOrder.Recipient.DisplayName}" />
 
                 <!-- Article Search (to add lines) -->
                 <TextBlock Grid.Row="3"
@@ -278,7 +263,7 @@
                     HorizontalAlignment="Right"
                     Margin="0,16,0,0">
 
-            <Button Content="Save" Width="100" Height="30" Click="SaveButton_Click" Margin="5 0"/>
+            <Button Content="Save" Width="100" Height="30" Margin="5 0" Command="{Binding SaveCommand}"/>
 
 
             <Button Content="Cancel"

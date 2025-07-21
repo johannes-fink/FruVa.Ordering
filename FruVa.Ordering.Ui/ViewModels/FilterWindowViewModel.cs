@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using FruVa.Ordering.ApiAccess;
 using FruVa.Ordering.Ui.Models;
 using FruVa.Ordering.Ui.Views;
+using System.Collections;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace FruVa.Ordering.Ui.ViewModels
@@ -21,6 +23,20 @@ namespace FruVa.Ordering.Ui.ViewModels
         private string _title = "Give me an Article";
 
         [ObservableProperty]
+        private DataGridSelectionMode _selectionMode = DataGridSelectionMode.Extended;
+
+        [ObservableProperty]
+        public List<IFilterItem> _selectedOrderDetails = [];
+        partial void OnSelectedOrderDetailsChanged(List<IFilterItem>? oldValue, List<IFilterItem> newValue)
+        {
+            oldValue?.ForEach(x => x.IsChecked = false);
+            foreach (var item in newValue)
+            {
+                item.IsChecked = !item.IsChecked;
+            }
+        }
+
+        [ObservableProperty]
         private string? _searchValue;
         partial void OnSearchValueChanged(string? value)
         {
@@ -29,10 +45,13 @@ namespace FruVa.Ordering.Ui.ViewModels
 
         [ObservableProperty]
         private bool? _isArticleFilterEnabled;
+
+
         partial void OnIsArticleFilterEnabledChanged(bool? value)
         {
             FilterItems!.Source = value == true ? _articles : _recipients;
             Title = value == true ? "Give me an Article" : "Give me a Recipient";
+            SelectionMode = value == true ? DataGridSelectionMode.Extended : DataGridSelectionMode.Single;
             FilterItems.View?.Refresh();
         }
 
@@ -43,7 +62,18 @@ namespace FruVa.Ordering.Ui.ViewModels
         }
 
         [RelayCommand]
-        public void Cancel(IClosable window) => window.Close();
+        public void Cancel(IClosable window)
+        {
+            window.DialogResult = false;
+            window.Close();
+        }
+
+        [RelayCommand]
+        public void Apply(IClosable window)
+        {
+            window.DialogResult = true;
+            window.Close();
+        }
 
         internal async Task LoadLookupDataAsync()
         {

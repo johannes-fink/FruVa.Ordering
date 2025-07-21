@@ -1,4 +1,5 @@
 ﻿using FruVa.Ordering.ApiAccess;
+using FruVa.Ordering.DataAccess;
 using FruVa.Ordering.Ui.ViewModels;
 using FruVa.Ordering.Ui.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,8 @@ namespace FruVa.Ordering.Ui
                 .AddSingleton<MainWindow>()
                 .AddSingleton<MainWindowViewModel>()
                 .AddSingleton<FilterWindow>()
-                .AddSingleton<FilterWindowViewModel>();
+                .AddSingleton<FilterWindowViewModel>()
+                .AddSingleton<Context>();
 
             Services = serviceCollection.BuildServiceProvider();
 

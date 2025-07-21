@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FruVa.Ordering.Ui.Models
 {
-    internal interface IFilterItem
+    public interface IFilterItem
     {
         Guid? Id { get; }
         string? DisplayName { get; set; }

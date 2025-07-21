@@ -57,7 +57,8 @@
                       HeadersVisibility="Column"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
-                      SelectionMode="Extended"
+                      SelectionMode="{Binding SelectionMode}"
+                      SelectionChanged="FilterDataGrid_SelectionChanged"
                       SelectionUnit="FullRow"
                       Margin="10"
                       BorderBrush="#DDDDDD" BorderThickness="1">
@@ -85,7 +86,7 @@
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Margin="0,16,0,0">
-            <Button Content="Apply" Width="100" Height="30" Margin="5,0"/>
+            <Button Content="Apply" Width="100" Height="30" Margin="5,0" Command="{Binding ApplyCommand}" CommandParameter="{Binding ElementName=this}"/>
             <Button Content="Cancel" Width="100" Height="30" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=this}" />
         </StackPanel>
     </Grid>

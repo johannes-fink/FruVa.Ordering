@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FruVa.Ordering.Ui.Models
 {
-    public class Article : IFilterItem
+    public partial class Article : ObservableObject, IFilterItem
     {
         public Article()
         {
@@ -23,7 +24,10 @@ namespace FruVa.Ordering.Ui.Models
 
         public Guid? Id => SourceItem?.Id;
         public string? DisplayName { get; set; }
-        public bool IsChecked { get; set; }
+
+        [ObservableProperty]
+        private bool _isChecked = false;
+
         public string? SearchContent => SourceItem?.ToString();
     }
 }
