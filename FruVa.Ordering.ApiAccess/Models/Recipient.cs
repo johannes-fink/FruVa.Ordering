@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -32,5 +33,10 @@ namespace FruVa.Ordering.ApiAccess.Models
 
         [JsonPropertyName("rowVersion")]
         public string RowVersion { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Id}|{Name}|{Street}|{StreetNumber}|{PostCode}|{City}|{Country}|{RowVersion}";
+        }
     }
 }
