@@ -11,6 +11,7 @@ using System.Buffers;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Linq;
+using System.Reflection;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
@@ -146,10 +147,27 @@ namespace FruVa.Ordering.Ui.ViewModels
         {
             // TODO: Convert UI Order model into DB model
             // Save orders to database
-            _context.SaveChanges();
+
+            foreach (var order in Orders)
+            {
+                var newDbOrder = new DataAccess.Models.Order()
+                {
+                    OrderNumber = order.OrderNumber,
+                };
+
+                foreach (var uiOrderDetail in order.OrderDetails)
+                {
+                    var newOrderDetail = new DataAccess.Models.OrderDetail()
+                    {
+                        Quantity = uiOrderDetail.Quantity ?? 0,
+                    };
+                }
+            }
+                  // context.Orders.Add(newDbOrder);
         }
     }
 }
+
 
 
 
