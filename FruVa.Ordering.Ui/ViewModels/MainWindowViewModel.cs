@@ -1,20 +1,16 @@
-﻿using System.Buffers;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using FruVa.Ordering.ApiAccess;
-using FruVa.Ordering.ApiAccess.Models;
 using FruVa.Ordering.DataAccess;
 using FruVa.Ordering.Ui.Models;
 using FruVa.Ordering.Ui.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Text;
+using System.Windows;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
@@ -30,10 +26,6 @@ namespace FruVa.Ordering.Ui.ViewModels
             _services = services;
             _apiService = apiService;
         }
-
-        // TODO: Load Orders from Database
-        // 1. Get all orders with children
-        // 2. Convert DB Order to UI Order
 
         [ObservableProperty]
         private ObservableCollection<Order> _orders = [];
@@ -159,6 +151,38 @@ namespace FruVa.Ordering.Ui.ViewModels
             }
 
             _context.SaveChanges();
+        }
+
+        [RelayCommand]
+        private void ExportToCsv()
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                FileName = "orders.csv",
+                Filter = "CSV-Datei (*.csv)|*.csv"
+            };
+
+            bool? result = saveFileDialog.ShowDialog();
+
+            if (result != true)
+            {
+                return;
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine("No;Recipient;Quantity;Price;Total;Article");
+
+            foreach (var order in Orders.OrderBy(x => x.OrderNumber).ToList())
+            {
+                foreach (var detail in order.OrderDetails.OrderBy(x => x.Article.DisplayName))
+                {
+                    sb.AppendLine($"{order.OrderNumber};{order.Recipient.DisplayName};{detail.Quantity};{detail.Price};{detail.Quantity * detail.Price};{detail.Article.DisplayName}");
+                }
+            }
+
+            File.WriteAllText(saveFileDialog.FileName, sb.ToString(), Encoding.UTF8);
+
+            MessageBox.Show("CSV successfully created!", "Export finished", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         public async Task LoadOrdersAsync()
