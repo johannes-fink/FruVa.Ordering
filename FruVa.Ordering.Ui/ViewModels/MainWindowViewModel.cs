@@ -1,7 +1,9 @@
 ﻿using System.Buffers;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,6 +13,7 @@ using FruVa.Ordering.ApiAccess.Models;
 using FruVa.Ordering.DataAccess;
 using FruVa.Ordering.Ui.Models;
 using FruVa.Ordering.Ui.Views;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FruVa.Ordering.Ui.ViewModels
@@ -18,31 +21,19 @@ namespace FruVa.Ordering.Ui.ViewModels
     public partial class MainWindowViewModel : ObservableObject
     {
         private readonly IServiceProvider _services;
+        private readonly IService _apiService;
         private readonly Context _context;
 
-        public MainWindowViewModel(Context context, IServiceProvider services)
+        public MainWindowViewModel(Context context, IServiceProvider services, IService apiService)
         {
             _context = context;
             _services = services;
-
-            //Orders = new ObservableCollection<Order>
-            //{
-            //    new Order
-            //    {
-            //        OrderNumber = 1,
-            //        Recipient = new Models.Recipient
-            //        {
-            //            DisplayName = "Test1",
-            //        },
-            //        OrderDetails =
-            //        [
-            //            new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 1" }, Quantity = 1, Price = 10m },
-            //            new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 2" }, Quantity = 2, Price = 20m }
-            //        ]
-            //    },
-            //    new Order { OrderNumber = 2, Recipient = new Models.Recipient { DisplayName = "Test2" } }
-            //};
+            _apiService = apiService;
         }
+
+        // TODO: Load Orders from Database
+        // 1. Get all orders with children
+        // 2. Convert DB Order to UI Order
 
         [ObservableProperty]
         private ObservableCollection<Order> _orders = [];
@@ -67,12 +58,6 @@ namespace FruVa.Ordering.Ui.ViewModels
             var newOrder = new Order
             {
                 OrderNumber = Orders.Count + 1,
-                Recipient = new Models.Recipient { DisplayName = "Neuer Empfänger" },
-                //OrderDetails =
-                //[
-                //    new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 1" }, Quantity = 1, Price = 10m },
-                //    new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 2" }, Quantity = 2, Price = 20m }
-                //]
             };
 
             Orders.Add(newOrder);
@@ -150,15 +135,12 @@ namespace FruVa.Ordering.Ui.ViewModels
         [RelayCommand]
         private void Save()
         {
-            // TODO: Convert UI Order model into DB model
-            // Save orders to database
-
             foreach (var order in Orders)
             {
                 var newDbOrder = new DataAccess.Models.Order()
                 {
                     OrderNumber = order.OrderNumber,
-                    RecipientId = order.Recipient.Id,
+                    RecipientId = order.Recipient.Id!.Value,
                 };
 
                 foreach (var uiOrderDetail in order.OrderDetails)
@@ -166,17 +148,70 @@ namespace FruVa.Ordering.Ui.ViewModels
                     var newOrderDetail = new DataAccess.Models.OrderDetail()
                     {
                         Quantity = uiOrderDetail.Quantity ?? 0,
-                        // TODO: Add the following
-                        // Price
-                        ArticleId = uiOrderDetail.Article.Id,
-                        // Order
+                        Price = uiOrderDetail.Price ?? 0,
+                        ArticleId = uiOrderDetail.Article.Id!.Value,
+                        Order = newDbOrder,
                     };
+                    newDbOrder.OrderDetails.Add(newOrderDetail);
                 }
 
                 _context.Orders.Add(newDbOrder);
             }
 
             _context.SaveChanges();
+        }
+
+        public async Task LoadOrdersAsync()
+        {
+            Orders.Clear();
+            var dbOrders = _context.Orders
+                .Include(o => o.OrderDetails)
+                .ToList();
+
+            foreach (var dbOrder in dbOrders)
+            {
+                var recipient = await _apiService.GetRecipientByIdAsync(dbOrder.RecipientId);
+                if (recipient == null)
+                {
+                    continue;
+                }
+
+                var orderDetails = await ConvertToOrderDetailAsync(dbOrder.OrderDetails);
+
+                var uiOrder = new Order
+                {
+                    OrderNumber = dbOrder.OrderNumber,
+                    Recipient = new Models.Recipient(recipient),
+                    OrderDetails = [.. orderDetails]
+                };
+
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    Orders.Add(uiOrder);
+                });
+            }
+        }
+
+        private async Task<List<OrderDetail>> ConvertToOrderDetailAsync(List<DataAccess.Models.OrderDetail> orderDetails)
+        {
+            var output = new List<OrderDetail>();
+            foreach (var orderDetail in orderDetails)
+            {
+                var apiArticle = await _apiService.GetArticleByIdAsync(orderDetail.ArticleId);
+                if (apiArticle == null)
+                {
+                    continue;
+                }
+
+                output.Add(new OrderDetail
+                {
+                    Quantity = orderDetail.Quantity,
+                    Price = orderDetail.Price,
+                    Article = new Models.Article(apiArticle)
+                });
+            }
+
+            return output;
         }
     }
 }

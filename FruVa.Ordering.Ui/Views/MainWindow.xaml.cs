@@ -23,6 +23,12 @@ namespace FruVa.Ordering.Ui.Views
             this.DataContext = viewModel;
 
             InitializeComponent();
-        }        
+        }
+
+        protected override async void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+            await _vm!.LoadOrdersAsync();
+        }
     }
 }
