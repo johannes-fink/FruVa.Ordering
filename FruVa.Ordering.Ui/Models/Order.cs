@@ -14,12 +14,12 @@ namespace FruVa.Ordering.Ui.Models
         public Recipient RecipientId { get; internal set; }
 
         [ObservableProperty]
-        public int _orderNumber;
+        private int _orderNumber;
 
         [ObservableProperty]
         private Recipient _recipient;
         
         [ObservableProperty, NotifyPropertyChangedFor(nameof(TotalPrice))]
-        public ObservableCollection<OrderDetail> _orderDetails = [];
+        private ObservableCollection<OrderDetail> _orderDetails = [];
     }
 }
