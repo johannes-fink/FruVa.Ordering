@@ -5,11 +5,11 @@ namespace FruVa.Ordering.ApiAccess
 {
     public class Service : IService
     {
-        private readonly Uri BASE_URL = new Uri("https://localhost:61404/api/");
+        private readonly Uri BASE_URL = new("https://localhost:61404/api/");
         private HttpClient HttpClient {  get; set; }
 
-        private List<Article> Articles { get; set; }
-        private List<Recipient> Recipients { get; set; }
+        private List<Article>? Articles { get; set; }
+        private List<Recipient>? Recipients { get; set; }
 
         public Service()
         {
