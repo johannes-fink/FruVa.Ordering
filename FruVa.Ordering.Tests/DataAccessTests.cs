@@ -20,15 +20,15 @@ namespace FruVa.Ordering.Tests
             {
                 OrderNumber = 20,
                 RecipientId = Guid.NewGuid(),
-                OrderDetails = new List<OrderDetail>
-                {
+                OrderDetails =
+                [
                     new()
                     {
                         ArticleId = Guid.NewGuid(),
                         Price = 100,
                         Quantity = 1,
                     }
-                }
+                ]
             };
 
             try

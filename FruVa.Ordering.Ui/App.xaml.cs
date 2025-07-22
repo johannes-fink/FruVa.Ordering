@@ -2,6 +2,8 @@
 using FruVa.Ordering.DataAccess;
 using FruVa.Ordering.Ui.ViewModels;
 using FruVa.Ordering.Ui.Views;
+using log4net;
+using log4net.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -24,15 +26,20 @@ namespace FruVa.Ordering.Ui
                 .AddSingleton<FilterWindowViewModel>()
                 .AddSingleton<Context>();
 
+
             // TODO: Register log4net logger in DI
             // 1. Register ILogger as Singleton
             // 2. Add try...catch for every entry point (e.g. RelayCommands)
             // 3. Add trace logging for important steps
 
-            Services = serviceCollection.BuildServiceProvider();
+        Services = serviceCollection.BuildServiceProvider();
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
+        }
+        public sealed class Log4NetAdapter<T> : LogImpl
+        {
+            public Log4NetAdapter() : base(LogManager.GetLogger(typeof(T)).Logger) { }
         }
     }
 }

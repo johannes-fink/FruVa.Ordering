@@ -14,25 +14,17 @@ using System.Windows;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
-    public partial class MainWindowViewModel : ObservableObject
+    public partial class MainWindowViewModel(Context context, IServiceProvider services, IService apiService) : ObservableObject
     {
-        private readonly IServiceProvider _services;
-        private readonly IService _apiService;
-        private readonly Context _context;
-
-        public MainWindowViewModel(Context context, IServiceProvider services, IService apiService)
-        {
-            _context = context;
-            _services = services;
-            _apiService = apiService;
-        }
+        private readonly IServiceProvider _services = services;
+        private readonly IService _apiService = apiService;
+        private readonly Context _context = context;
 
         [ObservableProperty]
         private ObservableCollection<Order> _orders = [];
 
         [ObservableProperty]
         private Order? _selectedOrder;
-
         partial void OnSelectedOrderChanged(Order? value)
         {
             IsDetailAreaEnabled = value is not null;
@@ -43,58 +35,120 @@ namespace FruVa.Ordering.Ui.ViewModels
 
         [ObservableProperty]
         private bool _isDetailAreaEnabled = false;
-
+        
         [RelayCommand]
         private void AddOrder()
         {
-            var newOrder = new Order
+            try
             {
-                OrderNumber = Orders.Count + 1,
-            };
+                var newOrder = new Order
+                {
+                    OrderNumber = Orders.Count + 1,
+                };
 
-            Orders.Add(newOrder);
-            SelectedOrder = newOrder;
+                Orders.Add(newOrder);
+                SelectedOrder = newOrder;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"An error occurred while adding the order:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
+
 
         [RelayCommand]
         private void Cancel(IClosable window)
         {
-            window.Close();
-            Application.Current.Shutdown();
+            try
+            {
+                window.Close();
+                Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"An error occurred while closing the window:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
 
         [RelayCommand]
         private void DeleteOrder()
         {
-            if (SelectedOrder == null)
+            try
             {
-                return;
-            }
+                if (SelectedOrder == null)
+                {
+                    return;
+                }
 
-            Orders.Remove(SelectedOrder);
+                Orders.Remove(SelectedOrder);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"An error occurred while deleting the order:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
 
         [RelayCommand]
         private void DeleteOrderDetail()
         {
-            if (SelectedOrder == null || SelectedOrderDetail == null)
+            try
             {
-                return;
-            }
+                if (SelectedOrder == null || SelectedOrderDetail == null)
+                {
+                    return;
+                }
 
-            SelectedOrder.OrderDetails.Remove(SelectedOrderDetail);
+                SelectedOrder.OrderDetails.Remove(SelectedOrderDetail);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error deleting order details:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
+
 
         [RelayCommand]
         private void FindRecipients()
         {
-            var filterWindow = _services.GetRequiredService<FilterWindow>();
-            filterWindow.IsArticleFilterEnabled = false;
-            filterWindow.ShowDialog();
-
-            if (filterWindow.SelectedItems.Any())
+            try
             {
-                SelectedOrder!.Recipient = (Models.Recipient)filterWindow.SelectedItems[0];
+                var filterWindow = _services.GetRequiredService<FilterWindow>();
+                filterWindow.IsArticleFilterEnabled = false;
+                filterWindow.ShowDialog();
+
+                if (filterWindow.SelectedItems.Count != 0)
+                {
+                    SelectedOrder!.Recipient = (Models.Recipient)filterWindow.SelectedItems[0];
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error finding recipients:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
@@ -105,7 +159,7 @@ namespace FruVa.Ordering.Ui.ViewModels
             filterWindow.IsArticleFilterEnabled = true;
             filterWindow.ShowDialog();
 
-            if (filterWindow.SelectedItems.Any())
+            if (filterWindow.SelectedItems.Count != 0)
             {
                 foreach (var article in filterWindow.SelectedItems)
                 {
