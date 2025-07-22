@@ -1,4 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Buffers;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FruVa.Ordering.ApiAccess;
@@ -7,11 +12,6 @@ using FruVa.Ordering.DataAccess;
 using FruVa.Ordering.Ui.Models;
 using FruVa.Ordering.Ui.Views;
 using Microsoft.Extensions.DependencyInjection;
-using System.Buffers;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Linq;
-using System.Reflection;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
@@ -27,9 +27,9 @@ namespace FruVa.Ordering.Ui.ViewModels
 
             //Orders = new ObservableCollection<Order>
             //{
-            //    new Order 
-            //    { 
-            //        OrderNumber = 1, 
+            //    new Order
+            //    {
+            //        OrderNumber = 1,
             //        Recipient = new Models.Recipient
             //        {
             //            DisplayName = "Test1",
@@ -38,7 +38,7 @@ namespace FruVa.Ordering.Ui.ViewModels
             //        [
             //            new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 1" }, Quantity = 1, Price = 10m },
             //            new OrderDetail { Article = new Models.Article { DisplayName = "Artikel 2" }, Quantity = 2, Price = 20m }
-            //        ] 
+            //        ]
             //    },
             //    new Order { OrderNumber = 2, Recipient = new Models.Recipient { DisplayName = "Test2" } }
             //};
@@ -49,6 +49,7 @@ namespace FruVa.Ordering.Ui.ViewModels
 
         [ObservableProperty]
         private Order? _selectedOrder;
+
         partial void OnSelectedOrderChanged(Order? value)
         {
             IsDetailAreaEnabled = value is not null;
@@ -79,7 +80,7 @@ namespace FruVa.Ordering.Ui.ViewModels
         }
 
         [RelayCommand]
-        private void Cancel(IClosable window) 
+        private void Cancel(IClosable window)
         {
             window.Close();
             Application.Current.Shutdown();
@@ -131,13 +132,17 @@ namespace FruVa.Ordering.Ui.ViewModels
             {
                 foreach (var article in filterWindow.SelectedItems)
                 {
-                    var isAlreadyInList = SelectedOrder!.OrderDetails.FirstOrDefault(x => x.Article.Id == article.Id);
+                    var isAlreadyInList = SelectedOrder!.OrderDetails.FirstOrDefault(x =>
+                        x.Article.Id == article.Id
+                    );
                     if (isAlreadyInList != null)
                     {
                         continue;
                     }
 
-                    SelectedOrder!.OrderDetails.Add(new OrderDetail { Article = (Models.Article)article });
+                    SelectedOrder!.OrderDetails.Add(
+                        new OrderDetail { Article = (Models.Article)article }
+                    );
                 }
             }
         }
@@ -153,6 +158,7 @@ namespace FruVa.Ordering.Ui.ViewModels
                 var newDbOrder = new DataAccess.Models.Order()
                 {
                     OrderNumber = order.OrderNumber,
+                    RecipientId = order.Recipient.Id,
                 };
 
                 foreach (var uiOrderDetail in order.OrderDetails)
@@ -160,14 +166,17 @@ namespace FruVa.Ordering.Ui.ViewModels
                     var newOrderDetail = new DataAccess.Models.OrderDetail()
                     {
                         Quantity = uiOrderDetail.Quantity ?? 0,
+                        // TODO: Add the following
+                        // Price
+                        ArticleId = uiOrderDetail.Article.Id,
+                        // Order
                     };
                 }
+
+                _context.Orders.Add(newDbOrder);
             }
-                  // context.Orders.Add(newDbOrder);
+
+            _context.SaveChanges();
         }
     }
 }
-
-
-
-
