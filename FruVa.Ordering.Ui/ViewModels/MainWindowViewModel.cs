@@ -31,7 +31,7 @@ namespace FruVa.Ordering.Ui.ViewModels
             OnPriceChanged += PriceChanged;
         }
 
-        private void PriceChanged(object sender, EventArgs e)
+        private void PriceChanged(object? sender, EventArgs e)
         {
             foreach (var order in Orders)
             {
