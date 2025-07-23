@@ -251,7 +251,8 @@
                                   ContentTemplate="{StaticResource ArticleSelectorTemplate}" />
 
                 <!-- Lines Grid -->
-                <DataGrid Grid.Row="4"
+                <DataGrid x:Name="OrderDetailsDataGrid"
+                    Grid.Row="4"
                           Grid.Column="0"
                           Grid.ColumnSpan="2"
                           Style="{StaticResource OrderLinesGridStyle}"

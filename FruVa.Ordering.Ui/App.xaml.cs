@@ -28,13 +28,6 @@ namespace FruVa.Ordering.Ui
                 .AddSingleton<Context>()
                 .AddSingleton((x) => LogManager.GetLogger(typeof(App)));
 
-            // TODO: Register log4net logger in DI
-            // 2. Add try...catch for every entry point (e.g. RelayCommands)
-            // 3. Add trace logging for important steps
-
-            // DONE:
-            // 1. Register ILogger as Singleton
-
             Services = serviceCollection.BuildServiceProvider();
 
             var mainWindow = Services.GetRequiredService<MainWindow>();

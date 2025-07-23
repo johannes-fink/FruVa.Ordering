@@ -5,11 +5,8 @@ namespace FruVa.Ordering.Ui.Models
 {
     public partial class Order : ObservableObject
     {
-        // TODO: Calculate TotalPrice on change of order details
-        // 1. React to changes in OrderDetails (Quantity or Price)
-        // 2. Calculate product of each OrderDetail Quantity * Price
-        // 3. Sum product of 2.
-        public decimal? TotalPrice => OrderDetails.Sum(x => x.Price);
+        [ObservableProperty]
+        public decimal? _totalPrice;
 
         [ObservableProperty]
         private int _orderNumber;
@@ -19,5 +16,9 @@ namespace FruVa.Ordering.Ui.Models
         
         [ObservableProperty, NotifyPropertyChangedFor(nameof(TotalPrice))]
         private ObservableCollection<OrderDetail> _orderDetails = [];
+        partial void OnOrderDetailsChanged(ObservableCollection<OrderDetail> value)
+        {
+            TotalPrice = value.Sum(x => x.TotalPrice);
+        }
     }
 }

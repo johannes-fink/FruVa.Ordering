@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Security.RightsManagement;
+using FruVa.Ordering.Ui.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FruVa.Ordering.Ui.Models
 {
@@ -9,9 +10,27 @@ namespace FruVa.Ordering.Ui.Models
         private Article? _article;
 
         [ObservableProperty]
-        public int? _quantity;
+        [NotifyPropertyChangedFor(nameof(TotalPrice))]
+        private int? _quantity;
+        partial void OnQuantityChanged(int? value)
+        {
+            InvokePriceChanged();
+        }
 
         [ObservableProperty]
-        public decimal? _price;
+        [NotifyPropertyChangedFor(nameof(TotalPrice))]
+        private decimal? _price;
+        partial void OnPriceChanged(decimal? value)
+        {
+            InvokePriceChanged();
+        }
+
+        public decimal? TotalPrice => Quantity * Price;
+
+        private void InvokePriceChanged()
+        {
+            var vm = App.Services!.GetRequiredService<MainWindowViewModel>();
+            vm?.OnPriceChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

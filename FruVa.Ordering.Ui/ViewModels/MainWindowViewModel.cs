@@ -13,15 +13,36 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
-    public partial class MainWindowViewModel(Context context, IServiceProvider services, IService apiService, ILog logger) : ObservableObject
+    public partial class MainWindowViewModel : ObservableObject
     {
-        private readonly IServiceProvider _services = services;
-        private readonly IService _apiService = apiService;
-        private readonly Context _context = context;
-        private readonly ILog _logger = logger;
+        internal EventHandler OnPriceChanged;
+
+        public MainWindowViewModel(Context context, IServiceProvider services, IService apiService, ILog logger)
+        {
+            _services = services;
+            _apiService = apiService;
+            _context = context;
+            _logger = logger;
+
+            OnPriceChanged += PriceChanged;
+        }
+
+        private void PriceChanged(object sender, EventArgs e)
+        {
+            foreach (var order in Orders)
+            {
+                order.TotalPrice = order.OrderDetails.Sum(x => x.TotalPrice);
+            }
+        }
+
+        private readonly IServiceProvider _services;
+        private readonly IService _apiService;
+        private readonly Context _context;
+        private readonly ILog _logger;
 
         [ObservableProperty]
         private bool _isBusy = false;
@@ -178,6 +199,7 @@ namespace FruVa.Ordering.Ui.ViewModels
 
                 if (filterWindow.SelectedItems.Count != 0)
                 {
+                    var addedOrderDetails = SelectedOrder!.OrderDetails.ToList();
                     foreach (var article in filterWindow.SelectedItems)
                     {
                         var isAlreadyInList = SelectedOrder!.OrderDetails.FirstOrDefault(x =>
@@ -189,10 +211,12 @@ namespace FruVa.Ordering.Ui.ViewModels
                             continue;
                         }
 
-                        SelectedOrder!.OrderDetails.Add(
+                        addedOrderDetails.Add(
                             new OrderDetail { Article = (Models.Article)article }
                         );
                     }
+
+                    SelectedOrder.OrderDetails = [.. addedOrderDetails];
                 }
             }
             catch (Exception ex)
@@ -269,6 +293,8 @@ namespace FruVa.Ordering.Ui.ViewModels
         {
             try
             {
+                _logger.Info("Starting to create CSV report...");
+
                 var saveFileDialog = new SaveFileDialog
                 {
                     FileName = "orders.csv",
@@ -281,6 +307,8 @@ namespace FruVa.Ordering.Ui.ViewModels
                 {
                     return;
                 }
+
+                _logger.Info($"Save report to {saveFileDialog.FileName}");
 
                 var sb = new StringBuilder();
                 sb.AppendLine("No;Recipient;Quantity;Price;Total;Article");
