@@ -9,11 +9,6 @@ namespace FruVa.Ordering.Ui.Models
 {
     public partial class Recipient : ObservableObject, IFilterItem
     {
-        public Recipient()
-        {
-
-        }
-
         public Recipient(ApiAccess.Models.Recipient sourceItem)
         {
             SourceItem = sourceItem;

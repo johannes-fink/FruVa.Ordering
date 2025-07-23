@@ -6,7 +6,7 @@ namespace FruVa.Ordering.Ui.Models
     public partial class OrderDetail : ObservableObject
     {
         [ObservableProperty]
-        private Article _article;
+        private Article? _article;
 
         [ObservableProperty]
         public int? _quantity;

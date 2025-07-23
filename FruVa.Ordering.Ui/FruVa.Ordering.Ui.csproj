@@ -9,17 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="GlobalSuppressions.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="log4net.config" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="GlobalSuppressions.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -34,5 +27,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="log4net" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\jfink\source\repos\FruVa.Ordering\FruVa.Ordering.Ui\.editorconfig" />
   </ItemGroup>
 </Project>
