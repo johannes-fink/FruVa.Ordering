@@ -9,7 +9,7 @@ using System.Windows.Data;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
-    public partial class FilterWindowViewModel : ObservableObject
+    public partial class FilterWindowViewModel : ObservableObject 
     {
         private readonly IService _apiService;
 
@@ -45,8 +45,6 @@ namespace FruVa.Ordering.Ui.ViewModels
 
         [ObservableProperty]
         private bool? _isArticleFilterEnabled;
-
-
         partial void OnIsArticleFilterEnabledChanged(bool? value)
         {
             FilterItems!.Source = value == true ? _articles : _recipients;
@@ -55,18 +53,9 @@ namespace FruVa.Ordering.Ui.ViewModels
             FilterItems.View?.Refresh();
         }
 
-
         public FilterWindowViewModel(IService apiService)
         {
-            try
-            {
-                _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"error:\n{ex.Message}", "Konstruktor-Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                throw;
-            }
+            _apiService = apiService;
         }
 
 
@@ -129,8 +118,6 @@ namespace FruVa.Ordering.Ui.ViewModels
                 MessageBox.Show($"there was an error: {ex.Message}", "error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
 
         private void Filter(object sender, FilterEventArgs e)
         {
