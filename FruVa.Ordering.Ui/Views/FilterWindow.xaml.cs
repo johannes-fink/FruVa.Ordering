@@ -51,7 +51,7 @@ namespace FruVa.Ordering.Ui.Views
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (this.DialogResult == false)
+            if (this.DialogResult == false || SelectedItems.Count == 0)
             {
                 SelectedItems.Clear();
             }

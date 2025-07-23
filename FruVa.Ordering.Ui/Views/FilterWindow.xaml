@@ -44,43 +44,41 @@
                    FontSize="14" Foreground="#777777"/>
 
 
-        <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto"
-                      BorderBrush="#DDDDDD" BorderThickness="1"
-                      Padding="10" Background="White">
-            
-            <DataGrid x:Name="FilterDataGrid"
-                      ItemsSource="{Binding FilterItems.View, AsyncState=True}"
-                      EnableColumnVirtualization="True"
-                      VirtualizingPanel.IsVirtualizing="True"
-                      VirtualizingPanel.VirtualizationMode="Recycling"
-                      AutoGenerateColumns="False"
-                      HeadersVisibility="Column"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      SelectionMode="{Binding SelectionMode}"
-                      SelectionChanged="FilterDataGrid_SelectionChanged"
-                      SelectionUnit="FullRow"
-                      Margin="10"
-                      BorderBrush="#DDDDDD" BorderThickness="1">
+        <DataGrid x:Name="FilterDataGrid"
+                    Grid.Row="4"
+                    Padding="10"
+                    Background="White"
+                    VerticalScrollBarVisibility="Auto"
+                    ItemsSource="{Binding FilterItems.View, AsyncState=True}"
+                    EnableColumnVirtualization="True"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling"
+                    AutoGenerateColumns="False"
+                    HeadersVisibility="Column"
+                    CanUserAddRows="False"
+                    CanUserDeleteRows="False"
+                    SelectionMode="{Binding SelectionMode}"
+                    SelectionChanged="FilterDataGrid_SelectionChanged"
+                    SelectionUnit="FullRow"
+                    Margin="10"
+                    BorderBrush="#DDDDDD" BorderThickness="1">
 
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Width="40">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="40">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
 
-                    <DataGridTextColumn Header="Name"
-                                        Binding="{Binding DisplayName}"
-                                        IsReadOnly="True"
-                                        Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </ScrollViewer>
-
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding DisplayName}"
+                                    IsReadOnly="True"
+                                    Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <StackPanel Grid.Row="5"
                     Orientation="Horizontal"

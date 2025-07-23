@@ -1,4 +1,5 @@
-﻿using FruVa.Ordering.Ui.ViewModels;
+﻿using FruVa.Ordering.Ui.Converters;
+using FruVa.Ordering.Ui.ViewModels;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,7 +29,7 @@ namespace FruVa.Ordering.Ui.Views
         protected override async void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
-            await _vm!.LoadOrdersAsync();
+            await _vm!.InitializeDataAsync();
         }
     }
 }
