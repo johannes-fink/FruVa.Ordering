@@ -18,7 +18,6 @@ namespace FruVa.Ordering.Ui.ViewModels
 {
     public partial class MainWindowViewModel(Context context, IServiceProvider services, IService apiService, ILog logger) : ObservableObject
     {
-        private const string MessageBoxText = "An error occurred while deleting the order:";
         private readonly IServiceProvider _services = services;
         private readonly IService _apiService = apiService;
         private readonly Context _context = context;
@@ -56,16 +55,16 @@ namespace FruVa.Ordering.Ui.ViewModels
                 Orders.Add(newOrder);
                 SelectedOrder = newOrder;
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "An error occurred while adding the order. Please try Again.",
+                    "An error occurred while adding the order. Please try again.",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
 
-                _logger.Error("An error occurred while trying to add a new order");
+                _logger.Error("An error occurred while trying to add a new order", ex);
             }
         }
 
@@ -77,16 +76,16 @@ namespace FruVa.Ordering.Ui.ViewModels
                 window.Close();
                 Application.Current.Shutdown();
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "An error occurred while closing the window Please try Again",
+                    "An error occurred while closing the window. Please try again.",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
 
-                _logger.Error("An error occurred while trying to close the window");
+                _logger.Error("An error occurred while trying to close the window", ex);
             }
         }
 
@@ -102,15 +101,16 @@ namespace FruVa.Ordering.Ui.ViewModels
 
                 Orders.Remove(SelectedOrder);
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "An error occurred while closing the window Please try again Please try Again:",
+                    "An error occurred while deleting the order. Please try again.",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                _logger.Error("An error occurred while trying to Delete the order");
+
+                _logger.Error("An error occurred while trying to delete the order", ex);
             }
         }
 
@@ -126,15 +126,16 @@ namespace FruVa.Ordering.Ui.ViewModels
 
                 SelectedOrder.OrderDetails.Remove(SelectedOrderDetail);
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Error deleting order details Please try Again:",
+                    "An error occurred while deleting an order detail. Please try again.",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                _logger.Error("An error occurred while trying to Deleting the Orderdetails");
+
+                _logger.Error("An error occurred while trying to delete an order detail", ex);
             }
         }
 
@@ -153,15 +154,16 @@ namespace FruVa.Ordering.Ui.ViewModels
                     SelectedOrder!.Recipient = (Models.Recipient)filterWindow.SelectedItems[0];
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Error finding recipients Please try Agian:",
+                    "An error occurred while searching for a recipient. Please try again.",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                _logger.Error("An error occurred while trying to find the recipient");
+
+                _logger.Error("An error occurred while trying to find a recipient", ex);
             }
         }
 
@@ -192,61 +194,74 @@ namespace FruVa.Ordering.Ui.ViewModels
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "An error occurred while adding articles Please try Again:",
-                    "Article Selection Error",
+                    "An error occurred while searching for an article. Please try again.",
+                    "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                _logger.Error("An error occurred while trying to add the articles");
 
+                _logger.Error("An error occurred while searching an article.", ex);
             }
         }
 
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanSave))]
         private void Save()
         {
             try
             {
+                var orderNumbers = Orders.Select(x => x.OrderNumber).ToList();
+                var ordersToDelete = _context.Orders.Where(x => orderNumbers.Contains(x.OrderNumber) == false).ToList();
+                _context.Orders.RemoveRange(ordersToDelete);
+
                 foreach (var order in Orders)
                 {
-                    var newDbOrder = new DataAccess.Models.Order()
+                    var orderFromStore = _context.Orders.FirstOrDefault(x => x.OrderNumber == order.OrderNumber);
+
+                    if (orderFromStore is null)
                     {
-                        OrderNumber = order.OrderNumber,
-                        RecipientId = order.Recipient.Id!.Value,
-                    };
+                        orderFromStore = new DataAccess.Models.Order();
+                        _context.Orders.Add(orderFromStore);
+                    }
+
+                    orderFromStore.OrderNumber = order.OrderNumber;
+                    orderFromStore.RecipientId = order.Recipient.Id!.Value;
+
+                    _context.OrderDetails.RemoveRange(orderFromStore.OrderDetails);
 
                     foreach (var uiOrderDetail in order.OrderDetails)
                     {
-                        var newOrderDetail = new DataAccess.Models.OrderDetail()
+                        var orderDetail = new DataAccess.Models.OrderDetail()
                         {
                             Quantity = uiOrderDetail.Quantity ?? 0,
                             Price = uiOrderDetail.Price ?? 0,
                             ArticleId = uiOrderDetail.Article.Id!.Value,
-                            Order = newDbOrder,
+                            Order = orderFromStore,
                         };
-                        newDbOrder.OrderDetails.Add(newOrderDetail);
-                    }
 
-                    _context.Orders.Add(newDbOrder);
+                        orderFromStore.OrderDetails.Add(orderDetail);
+                    }
                 }
 
                 _context.SaveChanges();
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "An error occurred while saving orders Please try Again:",
-                    "Save Error",
+                    "An error occurred while saving. Please try again.",
+                    "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                _logger.Error("An error occurred while trying to save the order");
+
+                _logger.Error("An error occurred while trying to save.", ex);
             }
         }
+
+        private bool CanSave => Orders.Select(x => x.Recipient).All(x => x is not null);
 
         [RelayCommand]
         private void ExportToCsv()
@@ -281,20 +296,21 @@ namespace FruVa.Ordering.Ui.ViewModels
 
                 MessageBox.Show("CSV successfully created!", "Export finished", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            catch 
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "An error occurred while exporting the CSV file Please try Again:",
-                    "Export Error",
+                    "An error occurred while exporting the CSV file. Please try again.",
+                    "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                _logger.Error("An error occurred while trying to find the recipient");
+
+                _logger.Error("An error occurred while trying to create a CSV report.", ex);
             }
         }
 
 
-        public async Task InitializeDataAsync()
+        internal async Task InitializeDataAsync()
         {
             try
             {
@@ -303,15 +319,16 @@ namespace FruVa.Ordering.Ui.ViewModels
                 await LoadLookupDataAsync();
                 await LoadOrdersAsync();
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "An error occurred while initializing data Please try Again :",
-                    "Initialization Error",
+                    "An error occurred while initializing data. Please try again.",
+                    "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
-                _logger.Error("An error occurred while trying to initializing the data");
+
+                _logger.Error("An error occurred while trying to initializing the data.", ex);
             }
             finally
             {
@@ -322,116 +339,67 @@ namespace FruVa.Ordering.Ui.ViewModels
 
         private async Task LoadLookupDataAsync()
         {
-            try
-            {
-                var getArticlesTask = _apiService.GetArticlesAsync();
-                var getRecipientsTask = _apiService.GetRecipientsAsync();
+            var getArticlesTask = _apiService.GetArticlesAsync();
+            var getRecipientsTask = _apiService.GetRecipientsAsync();
 
-                await Task.WhenAll(getArticlesTask, getRecipientsTask);
-            }
-            catch
-            {
-                MessageBox.Show(
-                    "An error occurred while doing the data Pleas try Again :",
-                    "Initialization Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
-                _logger.Error("An error occurred while trying to doing  the data ");
-            }
+            await Task.WhenAll(getArticlesTask, getRecipientsTask);
         }
 
         private async Task LoadOrdersAsync()
         {
-            try
-            {
-                var dbOrders = _context.Orders
-                    .Include(o => o.OrderDetails)
-                    .ToList();
+            var dbOrders = _context.Orders
+                .Include(o => o.OrderDetails)
+                .ToList();
 
-                foreach (var dbOrder in dbOrders)
+            foreach (var dbOrder in dbOrders)
+            {
+                var recipient = await _apiService.GetRecipientByIdAsync(dbOrder.RecipientId);
+                if (recipient == null)
                 {
-                    var recipient = await _apiService.GetRecipientByIdAsync(dbOrder.RecipientId);
-                    if (recipient == null)
-                    {
-                        continue;
-                    }
-
-                    var orderDetails = await ConvertToOrderDetailAsync(dbOrder.OrderDetails);
-
-                    var uiOrder = new Order
-                    {
-                        OrderNumber = dbOrder.OrderNumber,
-                        Recipient = new Models.Recipient(recipient),
-                        OrderDetails = [.. orderDetails]
-                    };
-
-                    App.Current.Dispatcher.Invoke(() =>
-                    {
-                        Orders.Add(uiOrder);
-                    });
+                    continue;
                 }
-            }
-            catch
-            {
-                MessageBox.Show(
-                    "An error occurred while loading orders Please Try Again:",
-                    "Load Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
-                _logger.Error("An error occurred while trying to loading the orders ");
+
+                var orderDetails = await ConvertToOrderDetailAsync(dbOrder.OrderDetails);
+
+                var uiOrder = new Order
+                {
+                    OrderNumber = dbOrder.OrderNumber,
+                    Recipient = new Models.Recipient(recipient),
+                    OrderDetails = [.. orderDetails]
+                };
+
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    Orders.Add(uiOrder);
+                });
             }
         }
-
-
 
         private async Task<List<OrderDetail>> ConvertToOrderDetailAsync(List<DataAccess.Models.OrderDetail> orderDetails)
         {
             var output = new List<OrderDetail>();
 
-            try
+            foreach (var orderDetail in orderDetails)
             {
-                foreach (var orderDetail in orderDetails)
+                try
                 {
-                    try
+                    var apiArticle = await _apiService.GetArticleByIdAsync(orderDetail.ArticleId);
+                    if (apiArticle == null)
                     {
-                        var apiArticle = await _apiService.GetArticleByIdAsync(orderDetail.ArticleId);
-                        if (apiArticle == null)
-                        {
-                            continue;
-                        }
-
-                        output.Add(new OrderDetail
-                        {
-                            Quantity = orderDetail.Quantity,
-                            Price = orderDetail.Price,
-                            Article = new Models.Article(apiArticle)
-                        });
+                        continue;
                     }
-                    catch (Exception innerEx)
+
+                    output.Add(new OrderDetail
                     {
-                        MessageBox.Show(
-                            "Error processing OrderDetail with ArticleId Please try Again",
-                            "OrderDetail Conversion Error",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Warning
-                        );
-                        _logger.Error("An error occurred while trying to processing the orderDetail with ArticleId ",innerEx);
-
-                    }
+                        Quantity = orderDetail.Quantity,
+                        Price = orderDetail.Price,
+                        Article = new Models.Article(apiArticle)
+                    });
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "An error occurred while converting order details Please try Again :",
-                    "Conversion Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
-                _logger.Error("An error occurred while trying to converting the orderDetail ",ex);
-
+                catch (Exception ex)
+                {
+                    _logger.Error("An error occurred while trying to convert an OrderDetail.", ex);
+                }
             }
 
             return output;
