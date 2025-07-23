@@ -57,7 +57,10 @@ namespace FruVa.Ordering.Ui.Views
             }
             else
             {
-                SelectedItems = (_vm.FilterItems.Source as List<IFilterItem>)?.Where(x => x.IsChecked).ToList();
+                if (_vm.FilterItems.Source is List<IFilterItem> filterItems)
+                {
+                    SelectedItems = [.. filterItems.Where(x => x.IsChecked)];
+                }
             }
 
             this.Visibility = Visibility.Hidden;
@@ -66,8 +69,13 @@ namespace FruVa.Ordering.Ui.Views
 
         private void FilterDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (sender is not DataGrid dataGrid)
+            {
+                return;
+            }
+
             var filterItems = new List<IFilterItem>();
-            foreach (IFilterItem item in (sender as DataGrid)?.SelectedItems)
+            foreach (IFilterItem item in dataGrid.SelectedItems)
             {
                 filterItems.Add(item);
             }
