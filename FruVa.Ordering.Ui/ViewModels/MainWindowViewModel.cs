@@ -181,8 +181,9 @@ namespace FruVa.Ordering.Ui.ViewModels
                     foreach (var article in filterWindow.SelectedItems)
                     {
                         var isAlreadyInList = SelectedOrder!.OrderDetails.FirstOrDefault(x =>
-                            x.Article.Id == article.Id
+                            x.Article!.Id == article.Id
                         );
+
                         if (isAlreadyInList != null)
                         {
                             continue;
@@ -228,7 +229,7 @@ namespace FruVa.Ordering.Ui.ViewModels
                     }
 
                     orderFromStore.OrderNumber = order.OrderNumber;
-                    orderFromStore.RecipientId = order.Recipient.Id!.Value;
+                    orderFromStore.RecipientId = order.Recipient!.Id!.Value;
 
                     _context.OrderDetails.RemoveRange(orderFromStore.OrderDetails);
 
@@ -238,7 +239,7 @@ namespace FruVa.Ordering.Ui.ViewModels
                         {
                             Quantity = uiOrderDetail.Quantity ?? 0,
                             Price = uiOrderDetail.Price ?? 0,
-                            ArticleId = uiOrderDetail.Article.Id!.Value,
+                            ArticleId = uiOrderDetail.Article!.Id!.Value,
                             Order = orderFromStore,
                         };
 
@@ -286,9 +287,9 @@ namespace FruVa.Ordering.Ui.ViewModels
 
                 foreach (var order in Orders.OrderBy(x => x.OrderNumber).ToList())
                 {
-                    foreach (var detail in order.OrderDetails.OrderBy(x => x.Article.DisplayName))
+                    foreach (var detail in order.OrderDetails.OrderBy(x => x.Article!.DisplayName))
                     {
-                        sb.AppendLine($"{order.OrderNumber};{order.Recipient.DisplayName};{detail.Quantity};{detail.Price};{detail.Quantity * detail.Price};{detail.Article.DisplayName}");
+                        sb.AppendLine($"{order.OrderNumber};{order.Recipient!.DisplayName};{detail.Quantity};{detail.Price};{detail.Quantity * detail.Price};{detail.Article!.DisplayName}");
                     }
                 }
 

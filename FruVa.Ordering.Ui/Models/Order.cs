@@ -11,13 +11,11 @@ namespace FruVa.Ordering.Ui.Models
         // 3. Sum product of 2.
         public decimal? TotalPrice => OrderDetails.Sum(x => x.Price);
 
-        public Recipient RecipientId { get; internal set; }
-
         [ObservableProperty]
         private int _orderNumber;
 
         [ObservableProperty]
-        private Recipient _recipient;
+        private Recipient? _recipient;
         
         [ObservableProperty, NotifyPropertyChangedFor(nameof(TotalPrice))]
         private ObservableCollection<OrderDetail> _orderDetails = [];

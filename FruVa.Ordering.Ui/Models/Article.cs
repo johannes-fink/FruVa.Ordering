@@ -1,19 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FruVa.Ordering.Ui.Models
 {
     public partial class Article : ObservableObject, IFilterItem
     {
-        public Article()
-        {
-            
-        }
-
         public Article(ApiAccess.Models.Article sourceItem)
         {
             SourceItem = sourceItem;

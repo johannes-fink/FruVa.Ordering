@@ -3,16 +3,17 @@ using CommunityToolkit.Mvvm.Input;
 using FruVa.Ordering.ApiAccess;
 using FruVa.Ordering.Ui.Models;
 using FruVa.Ordering.Ui.Views;
+using log4net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
-    public partial class FilterWindowViewModel : ObservableObject 
+    public partial class FilterWindowViewModel(IService apiService, ILog logger) : ObservableObject 
     {
-        private readonly IService _apiService;
-
+        private readonly IService _apiService = apiService;
+        private readonly ILog _logger = logger;
         private readonly List<IFilterItem> _articles = [];
         private readonly List<IFilterItem> _recipients = [];
 
@@ -53,12 +54,6 @@ namespace FruVa.Ordering.Ui.ViewModels
             FilterItems.View?.Refresh();
         }
 
-        public FilterWindowViewModel(IService apiService)
-        {
-            _apiService = apiService;
-        }
-
-
         [RelayCommand]
         public void Cancel(IClosable window)
         {
@@ -69,10 +64,12 @@ namespace FruVa.Ordering.Ui.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"There was an error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("An error occurred while attempting to cancel the operation. Please try Again.",
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                _logger.Error("An error occurred while trying to Cancel the operation.", ex);
             }
         }
-
 
         [RelayCommand]
         public void Apply(IClosable window)
@@ -84,7 +81,11 @@ namespace FruVa.Ordering.Ui.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"There was an error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("An error occurred while applying your window settings. Please try again.", 
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                _logger.Error("An error occurred while trying to Apply the operation.", ex);
+
             }
         }
 
@@ -115,7 +116,10 @@ namespace FruVa.Ordering.Ui.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"there was an error: {ex.Message}", "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"there was an error trying to load youre data. Please try again.", 
+                    "error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _logger.Error("An error occurred while trying to load the data.", ex);
+
             }
         }
 
@@ -155,8 +159,11 @@ namespace FruVa.Ordering.Ui.ViewModels
             }
             catch (Exception ex)
             {
-                e.Accepted = false;
-                MessageBox.Show($"An error occurred while filtering:\n{ex.Message}", "filtering-error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            e.Accepted = false;
+            MessageBox.Show($"there was an error trying to filter youre data. Please try again.",
+            "error", MessageBoxButton.OK, MessageBoxImage.Error);
+            _logger.Error("An error occurred while trying to filter the data.", ex);
+
             }
         }
 
