@@ -1,4 +1,5 @@
 ﻿using FruVa.Ordering.ApiAccess.Models;
+using System.Numerics;
 using System.Text.Json;
 
 namespace FruVa.Ordering.ApiAccess
@@ -27,7 +28,6 @@ namespace FruVa.Ordering.ApiAccess
 
             if (response.IsSuccessStatusCode == false)
             {
-                // TODO: Error => Log and inform user
                 return [];
             }
 
@@ -49,7 +49,6 @@ namespace FruVa.Ordering.ApiAccess
 
             if (response.IsSuccessStatusCode == false)
             {
-                // TODO: Error => Log and inform user
                 return [];
             }
 
@@ -71,7 +70,6 @@ namespace FruVa.Ordering.ApiAccess
 
             if (response.IsSuccessStatusCode == false)
             {
-                // TODO: Error => Log and inform user
                 return null;
             }
 
@@ -92,7 +90,6 @@ namespace FruVa.Ordering.ApiAccess
 
             if (response.IsSuccessStatusCode == false)
             {
-                // TODO: Error => Log and inform user
                 return null;
             }
 
