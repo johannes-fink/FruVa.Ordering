@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace FruVa.Ordering.ApiAccess.Models
 {
@@ -19,40 +14,40 @@ namespace FruVa.Ordering.ApiAccess.Models
         public int DetailArticleNumber { get; set; }
 
         [JsonPropertyName("articleName")]
-        public string ArticleName { get; set; }
+        public required string ArticleName { get; set; }
 
         [JsonPropertyName("packageSize")]
-        public string PackageSize { get; set; }
+        public required string PackageSize { get; set; }
 
         [JsonPropertyName("articleGroupNumber")]
-        public string ArticleGroupNumber { get; set; }
+        public required string ArticleGroupNumber { get; set; }
 
         [JsonPropertyName("articleGroupName")]
-        public string ArticleGroupName { get; set; }
+        public required string ArticleGroupName { get; set; }
 
         [JsonPropertyName("originCountry")]
-        public string OriginCountry { get; set; }
+        public required string OriginCountry { get; set; }
 
         [JsonPropertyName("tradeClass")]
-        public string TradeClass { get; set; }
+        public required string TradeClass { get; set; }
 
         [JsonPropertyName("colli")]
         public float Colli { get; set; }
 
         [JsonPropertyName("caliber")]
-        public string Caliber { get; set; }
+        public required string Caliber { get; set; }
 
         [JsonPropertyName("variety")]
-        public string Variety { get; set; }
+        public required string Variety { get; set; }
 
         [JsonPropertyName("ownBrand")]
-        public string OwnBrand { get; set; }
+        public required string OwnBrand { get; set; }
 
         [JsonPropertyName("searchQuery")]
-        public string SearchQuery { get; set; }
+        public required string SearchQuery { get; set; }
 
         [JsonPropertyName("rowVersion")]
-        public string RowVersion { get; set; }
+        public required string RowVersion { get; set; }
 
         public override string ToString()
         {

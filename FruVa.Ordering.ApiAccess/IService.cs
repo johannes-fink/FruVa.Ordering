@@ -1,9 +1,4 @@
 ﻿using FruVa.Ordering.ApiAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FruVa.Ordering.ApiAccess
 {
