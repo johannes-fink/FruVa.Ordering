@@ -9,6 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="GlobalSuppressions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="log4net.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="GlobalSuppressions.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FruVa.Ordering.ApiAccess\FruVa.Ordering.ApiAccess.csproj" />
     <ProjectReference Include="..\FruVa.Ordering.DataAccess\FruVa.Ordering.DataAccess.csproj" />
   </ItemGroup>

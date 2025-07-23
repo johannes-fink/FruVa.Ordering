@@ -1,12 +1,10 @@
 ﻿using FruVa.Ordering.ApiAccess;
 using FruVa.Ordering.DataAccess;
+using FruVa.Ordering.Ui.Converters;
 using FruVa.Ordering.Ui.ViewModels;
 using FruVa.Ordering.Ui.Views;
 using log4net;
-using log4net.Core;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 
 namespace FruVa.Ordering.Ui
@@ -17,29 +15,36 @@ namespace FruVa.Ordering.Ui
 
         public App()
         {
+            InitializeComponent();
+
             var serviceCollection = new ServiceCollection();
             serviceCollection
                 .AddSingleton<IService, Service>()
+                .AddSingleton<InvertBooleanConverter>()
                 .AddSingleton<MainWindow>()
                 .AddSingleton<MainWindowViewModel>()
                 .AddSingleton<FilterWindow>()
                 .AddSingleton<FilterWindowViewModel>()
-                .AddSingleton<Context>();
-
+                .AddSingleton<Context>()
+                .AddSingleton((x) => LogManager.GetLogger(typeof(App)));
 
             // TODO: Register log4net logger in DI
-            // 1. Register ILogger as Singleton
             // 2. Add try...catch for every entry point (e.g. RelayCommands)
             // 3. Add trace logging for important steps
 
-        Services = serviceCollection.BuildServiceProvider();
+            // DONE:
+            // 1. Register ILogger as Singleton
+
+            Services = serviceCollection.BuildServiceProvider();
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }
-        public sealed class Log4NetAdapter<T> : LogImpl
+
+        protected override void OnStartup(StartupEventArgs e)
         {
-            public Log4NetAdapter() : base(LogManager.GetLogger(typeof(T)).Logger) { }
+            log4net.Config.XmlConfigurator.Configure();
+            base.OnStartup(e);
         }
     }
 }
