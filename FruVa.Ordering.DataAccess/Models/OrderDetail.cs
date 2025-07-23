@@ -19,6 +19,6 @@ namespace FruVa.Ordering.DataAccess.Models
         public Guid ArticleId { get; set; }
 
         [Required]
-        public Order Order { get; set; }
+        public Order? Order { get; set; }
     }
 }
