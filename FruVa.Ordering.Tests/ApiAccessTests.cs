@@ -5,7 +5,7 @@ namespace FruVa.Ordering.Tests
     [TestClass]
     public sealed class ApiAccessTests
     {
-        private static IService? _service;
+        private IService? _service;
         private readonly Guid ARTICLE_ID = Guid.Parse("a70d7800-2099-4085-88cd-000039c882c5");
         private readonly Guid RECIPIENT_ID = Guid.Parse("fa0460f7-7e76-4ad4-bcc3-064eed3e500f");
 
