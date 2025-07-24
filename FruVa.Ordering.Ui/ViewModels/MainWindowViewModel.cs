@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FruVa.Ordering.ApiAccess;
-using FruVa.Ordering.ApiAccess.Models;
 using FruVa.Ordering.DataAccess;
 using FruVa.Ordering.Ui.Models;
 using FruVa.Ordering.Ui.Views;
@@ -13,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace FruVa.Ordering.Ui.ViewModels
 {
